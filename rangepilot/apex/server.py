@@ -64,17 +64,93 @@ def build_app():
 
         @app.post("/job/execute")
         def execute_job(body: dict):
-            return {"status": "queued", "jobId": body.get("jobId", "mock-job-123")}
+            import os
+            from bnbagent.erc8183 import (
+                ERC8183Client,
+                DeliverableManifest,
+                SCHEMA_VERSION,
+            )
+            from web3 import Web3
+            from ..handler import parse_job_description, generate
+            import json
+
+            job_id = body.get("jobId")
+            if not job_id:
+                return {"error": "jobId required"}, 400
+
+            # Get provider private key from env
+            provider_pk = os.getenv("PRIVATE_KEY")
+            if not provider_pk:
+                return {"error": "PRIVATE_KEY not set in .env"}, 500
+
+            try:
+                # Initialize provider client
+                provider_client = ERC8183Client(provider_pk, "bsc-testnet")
+
+                # Generate the deliverable using RangePilot engine
+                job_desc = body.get("description", "{}")
+                req = parse_job_description(job_desc)
+                result = generate(req)
+                deliverable_json = json.dumps(result.spec, indent=2, ensure_ascii=False)
+
+                # Create manifest
+                manifest = DeliverableManifest(
+                    version=SCHEMA_VERSION,
+                    job_id=job_id,
+                    chain_id=provider_client.network.chain_id,
+                    contracts={
+                        "commerce": provider_client.commerce.address,
+                        "router": provider_client.router.address,
+                        "policy": provider_client.policy.address,
+                    },
+                    response={
+                        "content": deliverable_json,
+                        "content_type": "application/json",
+                    },
+                )
+
+                # Submit to chain
+                # Note: In a real scenario, this would be uploaded to IPFS first.
+                # Here we use a placeholder URL, but the hash is anchored on-chain.
+                deliverable_url = "ipfs://mock-cid-for-demo"
+                tx_hash = provider_client.submit(
+                    job_id,
+                    manifest.manifest_hash(),
+                    {"deliverable_url": deliverable_url},
+                )
+
+                return {
+                    "status": "submitted",
+                    "jobId": job_id,
+                    "tx_hash": tx_hash,
+                    "spec_sha256": result.spec["spec_sha256"],
+                    "message": "Deliverable submitted to chain successfully.",
+                }
+            except Exception as e:
+                return {"error": str(e)}, 500
 
         @app.get("/job/{job_id}/response")
         def get_response(job_id: str):
-            return {
-                "jobId": job_id,
-                "status": "completed",
-                "deliverable": {
-                    "spec_sha256": "f36e09205ea12ca53bf05a2014d8c2a3b1efcb39432403a64239e96d37972e30"
-                },
-            }
+            import os
+            from bnbagent.erc8183 import ERC8183Client
+
+            provider_pk = os.getenv("PRIVATE_KEY")
+            if not provider_pk:
+                return {"error": "PRIVATE_KEY not set"}, 500
+
+            try:
+                client = ERC8183Client(provider_pk, "bsc-testnet")
+                job = client.get_job(job_id)
+                return {
+                    "jobId": job_id,
+                    "status": job.status.name,
+                    "deliverable_url": job.deliverable_url
+                    if hasattr(job, "deliverable_url")
+                    else None,
+                    "message": "Check BscScan for tx details.",
+                }
+            except Exception as e:
+                return {"error": str(e)}, 500
 
         return app
     return create_apex_app(on_job=handle_job)
