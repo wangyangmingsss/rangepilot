@@ -1,0 +1,14 @@
+{
+  "_comment": "Put this JSON in the APEX job `description` field when hiring RangePilot on-chain.",
+  "pair": {
+    "base": "WBNB",
+    "quote": "USDT",
+    "base_address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    "quote_address": "0x55d398326f99059fF775485246999027B3197955",
+    "pool_address": null
+  },
+  "capital_quote": 5000,
+  "risk": "balanced",
+  "fee_tier": 2500,
+  "csv_path": null
+}

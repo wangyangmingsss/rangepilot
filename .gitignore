@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.env
+.cmc_cache/
+out/
+.agent-data/
+*.egg-info/
+.ipynb_checkpoints/
+.DS_Store

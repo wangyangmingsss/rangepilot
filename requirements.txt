@@ -1,0 +1,11 @@
+# Core (offline demo + tests need only these)
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8
+
+# Optional — live integrations (uncomment what you use)
+# python-dotenv>=1.0          # .env loading convenience
+# bnbagent[server,ipfs]>=0.1.1  # APEX agent server + ERC-8004 (BSC testnet)
+# uvicorn>=0.30               # serves the APEX FastAPI app
+# x402>=0.1                   # keyless pay-per-request CMC access
+# eth-account>=0.11           # signs x402 payments (Base USDC)

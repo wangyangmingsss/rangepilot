@@ -1,0 +1,284 @@
+{
+  "spec_version": "1.1.0",
+  "generator": {
+    "name": "RangePilot",
+    "engine_commit": "unversioned",
+    "python": "3.13.13",
+    "generated_at": "2026-06-11T03:12:02.758908+00:00"
+  },
+  "market": {
+    "chain": "bsc",
+    "dex": "pancakeswap-v3",
+    "pair": {
+      "base": "WBNB",
+      "quote": "USDT",
+      "base_address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+      "quote_address": "0x55d398326f99059fF775485246999027B3197955",
+      "pool_address": null
+    },
+    "fee_tier": 2500,
+    "fee_rate": 0.0025,
+    "tick_spacing": 50
+  },
+  "capital": {
+    "amount_quote": 5000.0,
+    "denomination": "USDT"
+  },
+  "strategy": {
+    "family": "regime_adaptive",
+    "params": {
+      "family": "regime_adaptive",
+      "k_sigma": 1.9,
+      "horizon_hours": 72.0,
+      "regime_width_mult": {
+        "low": 0.8,
+        "mid": 1.0,
+        "high": 1.5
+      },
+      "rebalance_trigger": "range_exit",
+      "edge_band": 0.0,
+      "cooldown_bars": 6,
+      "pause_in_stress": false,
+      "pause_in_high_vol": false,
+      "max_rebalances_per_day": 8
+    },
+    "regime_source": "local"
+  },
+  "rebalance_rules": {
+    "trigger": "range_exit",
+    "edge_band": 0.0,
+    "cooldown_bars": 6,
+    "max_rebalances_per_day": 8
+  },
+  "risk_controls": {
+    "pause_in_stress": false,
+    "pause_in_high_vol": false,
+    "token_risk_screen_required": true,
+    "max_position_share_of_active_liquidity": 0.25
+  },
+  "backtest": {
+    "in_sample": {
+      "net_return": 0.200653,
+      "apr": 0.804818,
+      "sharpe_daily_ann": 1.4022,
+      "max_drawdown": -0.247807,
+      "fees_total_quote": 1368.2219,
+      "fee_apr": 1.097585,
+      "costs_total_quote": 40.9552,
+      "il_vs_hodl_price_quote": -997.7492,
+      "edge_vs_hodl_5050": 0.083063,
+      "time_in_range": 0.9986,
+      "n_rebalances": 3,
+      "bars": 2184,
+      "years": 0.2493
+    },
+    "out_of_sample": {
+      "net_return": -0.337443,
+      "apr": -3.421297,
+      "sharpe_daily_ann": -3.7894,
+      "max_drawdown": -0.413564,
+      "fees_total_quote": 627.7488,
+      "fee_apr": 1.272935,
+      "costs_total_quote": 24.0851,
+      "il_vs_hodl_price_quote": -799.4088,
+      "edge_vs_hodl_5050": -0.064338,
+      "time_in_range": 0.9994,
+      "n_rebalances": 2,
+      "bars": 864,
+      "years": 0.0986
+    },
+    "robustness": {
+      "share_sensitivity": [
+        {
+          "share_mult": 0.5,
+          "apr": 0.22002,
+          "fee_apr": 0.528043,
+          "max_drawdown": -0.275029,
+          "edge_vs_hodl_5050": -0.062736
+        },
+        {
+          "share_mult": 1.0,
+          "apr": 0.804818,
+          "fee_apr": 1.097585,
+          "max_drawdown": -0.247807,
+          "edge_vs_hodl_5050": 0.083063
+        },
+        {
+          "share_mult": 1.5,
+          "apr": 1.433142,
+          "fee_apr": 1.71008,
+          "max_drawdown": -0.223198,
+          "edge_vs_hodl_5050": 0.239713
+        }
+      ],
+      "cost_sensitivity": [
+        {
+          "cost_mult": 0.5,
+          "apr": 0.816237,
+          "max_drawdown": -0.247807,
+          "n_rebalances": 3
+        },
+        {
+          "cost_mult": 1.0,
+          "apr": 0.804818,
+          "max_drawdown": -0.247807,
+          "n_rebalances": 3
+        },
+        {
+          "cost_mult": 2.0,
+          "apr": 0.78203,
+          "max_drawdown": -0.247806,
+          "n_rebalances": 3
+        }
+      ],
+      "k_plateau": {
+        "k_values": [
+          1.52,
+          1.9,
+          2.28
+        ],
+        "apr": [
+          -0.479658,
+          0.804818,
+          0.053524
+        ],
+        "edge_vs_hodl": [
+          -0.237176,
+          0.083063,
+          -0.104246
+        ],
+        "plateau_ok": false
+      },
+      "gates": {
+        "survives_share_minus50": true,
+        "survives_cost_x2": true,
+        "drawdown_under_35pct": true,
+        "k_plateau_ok": false
+      },
+      "robust": false
+    }
+  },
+  "assumptions_and_disclosures": {
+    "A1_active_liquidity_quote": 2000000.0,
+    "A1_note": "Fee share uses a STATIC active-liquidity snapshot; CMC provides no historical tick-level liquidity. Stress tested at x0.5/x1.0/x1.5 in robustness.share_sensitivity.",
+    "A2_rebalance_cost_rate": 0.0015,
+    "A2_gas_usd_per_rebalance": 0.6,
+    "A2_entry_cost_rate": 0.001,
+    "A3_note": "In-bar time-in-range proxied by candle [low,high] overlap with the position range.",
+    "A4_note": "Volume is quote-denominated per-bar volume from CMC DEX OHLCV.",
+    "no_alpha_claim": "RangePilot optimizes a payoff STRUCTURE (fees vs IL) under volatility regimes. It does not claim directional price-prediction alpha."
+  },
+  "data_lineage": {
+    "ohlcv": {
+      "source_path": "data/sample/WBNB_USDT_1h_sample.csv",
+      "rows": 3600,
+      "start": "2026-01-01 00:00:00+00:00",
+      "end": "2026-05-30 23:00:00+00:00",
+      "sha256": "0ff06ba0465a7159d1ecf493beeee7eec65cf32bc5c5881f18f39e4f6f205b1f",
+      "columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume_quote"
+      ]
+    },
+    "interval": "1h",
+    "regime_source": "local",
+    "is_oos_split": {
+      "is_bars": 2520,
+      "oos_bars": 1080,
+      "ratio": 0.7
+    },
+    "selection": {
+      "status": "no_robust_candidate",
+      "grid_size": 9,
+      "robust_candidates": 0,
+      "selected_family": "regime_adaptive",
+      "selected_k_sigma": 1.9
+    }
+  },
+  "execution_mapping": {
+    "venue_contracts_bsc_mainnet": {
+      "factory": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865",
+      "nonfungible_position_manager": "0x46A15B0b27311cedF172AB29E4f4766fbE7F4364",
+      "swap_router": "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4",
+      "quoter_v2": "0xB048Bbc1Ee6b733FFfCFb9e9CeF7375518e25997"
+    },
+    "verify_note": "[VERIFY-DAY1] re-check addresses on docs.pancakeswap.finance before any signing.",
+    "actions": [
+      {
+        "rule": "open_position",
+        "contract": "0x46A15B0b27311cedF172AB29E4f4766fbE7F4364",
+        "call": "mint(MintParams{token0,token1,fee,tickLower,tickUpper,...})",
+        "params_from_spec": [
+          "market.fee_tier",
+          "strategy.params.k_sigma",
+          "regime->width via strategy.params.regime_width_mult"
+        ]
+      },
+      {
+        "rule": "rebalance.exit",
+        "contract": "0x46A15B0b27311cedF172AB29E4f4766fbE7F4364",
+        "call": "decreaseLiquidity + collect + burn"
+      },
+      {
+        "rule": "rebalance.swap_to_ratio",
+        "contract": "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4",
+        "call": "exactInputSingle(...)",
+        "twak_note": "This leg is a plain swap and is executable via the Trust Wallet Agent Kit swap skill within user-set caps."
+      },
+      {
+        "rule": "pause.exit_to_quote",
+        "contract": "0x46A15B0b27311cedF172AB29E4f4766fbE7F4364",
+        "call": "decreaseLiquidity + collect + burn, then router swap to quote"
+      }
+    ],
+    "executor_note": "Position mint/burn are generic contract calls (not a TWAK native skill); under TWAK they are proposed via WalletConnect for user approval, or executed by any generic BSC executor. Swap legs map to TWAK-native swap automation."
+  },
+  "validation": {
+    "status": "pass_with_warnings",
+    "blockers": [],
+    "warnings": [
+      "base_address: no live TWAK screen performed (provider=offline-heuristic-stub) — run before execution",
+      "quote_address: no live TWAK screen performed (provider=offline-heuristic-stub) — run before execution"
+    ],
+    "token_risk_reports": [
+      {
+        "token_address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+        "provider": "offline-heuristic-stub",
+        "risk_level": "unknown",
+        "flags": [],
+        "raw": {
+          "note": "offline stub — run live TWAK screen before execution"
+        }
+      },
+      {
+        "token_address": "0x55d398326f99059fF775485246999027B3197955",
+        "provider": "offline-heuristic-stub",
+        "risk_level": "unknown",
+        "flags": [],
+        "raw": {
+          "note": "offline stub — run live TWAK screen before execution"
+        }
+      }
+    ],
+    "action_mapping_audit": {
+      "twak_native_actions": [
+        "rebalance.swap_to_ratio",
+        "pause.exit_to_quote (swap leg)"
+      ],
+      "generic_contract_calls": [
+        "open_position (NPM.mint)",
+        "rebalance.exit (NPM.decreaseLiquidity/collect/burn)"
+      ],
+      "twak_modes": {
+        "swap_legs": "TWAK agent-wallet autonomous mode within user caps",
+        "mint_burn_legs": "WalletConnect proposal (user approves) or external executor"
+      }
+    }
+  },
+  "notes": "",
+  "research_sha256": "f36e09205ea12ca53bf05a2014d8c2a3b1efcb39432403a64239e96d37972e30",
+  "spec_sha256": "95b0e59105e8556faa594fb4c8d4ad3e64fb42b93adc6ef8642064f0dcdd59f1"
+}
