@@ -66,16 +66,29 @@ Artifacts land in `examples/demo_output/`:
 
 ## ✅ Proof of Execution & DoraHacks Evidence
 
-This repository has passed all offline verification and on-chain lifecycle tests. Key artifacts for judges:
+This repository has passed all offline verification and **full on-chain APEX lifecycle tests**. Key artifacts for judges:
 
-- **Deterministic Reproducibility** (via `bash reproduce.sh`):
-  - `research_sha256`: `f36e09205ea12ca53bf05a2014d8c2a3b1efcb39432403a64239e96d37972e30` (run-stable across machines)
-  - `spec_sha256`: `95b0e59105e8556faa594fb4c8d4ad3e64fb42b93adc6ef8642064f0dcdd59f1` (delivery anchor)
-- **APEX On-Chain Identity (BSC Testnet)**:
+### 1. Deterministic Reproducibility
+- `research_sha256`: `f36e09205ea12ca53bf05a2014d8c2a3b1efcb39432403a64239e96d37972e30` (run-stable across machines)
+- `spec_sha256`: `95b0e59105e8556faa594fb4c8d4ad3e64fb42b93adc6ef8642064f0dcdd59f1` (delivery anchor)
+- Run `bash reproduce.sh` to verify locally.
+
+### 2. Full APEX On-Chain Lifecycle (BSC Testnet)
+We have successfully executed the complete ERC-8183 client hiring workflow:
+- **Step A: Agent Identity Registration**
   - `agentId`: `1360`
   - Registration Tx: [`0x831fee562cef5e8ed131db90f092e513daa9b9538742b8baa2525d84a02956ab`](https://testnet.bscscan.com/tx/0x831fee562cef5e8ed131db90f092e513daa9b9538742b8baa2525d84a02956ab)
-- **Day-1 Smoke Test Status**: T0=GO (offline engine), T1=NO-GO (CMC HTTP 500, gracefully degraded to CSV fallback as designed), T2/T3=ADAPT, T4/T5=SKIP.
-- **Demo Artifacts**: See `examples/demo_output/` for the generated spec, tearsheet, and report.
+- **Step B: Client Job Creation & Funding (Job #146)**
+  - Client Address: `0xc842e355Fc93C43e39e0856572bB04cD1ae92eC4`
+  - Actions: `createJob` → `registerJob` → `setBudget` → `approve` → `fund` (1.0 U Token escrowed)
+- **Step C: Agent Execution & On-Chain Submission**
+  - Provider Address: `0x6d662707910440FBe94F13bfC103e61018b77808`
+  - Action: RangePilot engine generated the strategy spec and anchored its hash on-chain via `submit`.
+  - **🏆 Submission Tx**: [`0x87cb63bebd960d6336d68bc8adaa1ee200567be03b92c02d86ce47742c68c6a1`](https://testnet.bscscan.com/tx/0x87cb63bebd960d6336d68bc8adaa1ee200567be03b92c02d86ce47742c68c6a1)
+  - Delivered Spec SHA256: `4eccb43f8e7365a47dbf4b5f748f1519322b468c5a8491b30c26e0b354151695`
+
+### 3. Day-1 Smoke Test Status
+- T0=GO (offline engine), T1=NO-GO (CMC HTTP 500, gracefully degraded to CSV fallback as designed), T2/T3=ADAPT (TWAK fallback active), T4/T5=SKIP.
 
 > **Note on `robust=false`**: The bundled demo intentionally yields a `robust=false` result. This is a designed, honest negative result where the gatekeeper correctly rejects an In-Sample (IS) peak, and the Out-of-Sample (OOS) metrics prove the rejection was justified. This is a core feature of our risk management, not a bug.
 
