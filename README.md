@@ -1,5 +1,7 @@
 # RangePilot
 
+🌐 **Live Interactive Demo**: [https://5q9sysnc.mule.page/#architecture](https://5q9sysnc.mule.page/#architecture)
+
 **A CMC Skill that generates safety-screened, contract-mapped, backtestable
 market-making strategies for PancakeSwap V3 on BNB Chain — and serves them as
 an on-chain hireable agent (ERC-8004 + APEX) on BSC testnet.**
